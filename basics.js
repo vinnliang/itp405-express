@@ -1,9 +1,11 @@
-function a(callbackFunction)
-{
-  callbackFunction();
-}
+var app = require("express")();
 
-a(function()
-{
-  console.log('hi');
+app.get("/", function(httpRequest, httpResponse, next){
+    httpResponse.write("Hello");
+    next(); //remove this and see what happens
+});
+
+app.get("/", function(httpRequest, httpResponse, next){
+    httpResponse.write(" World !!!");
+    httpResponse.end();
 });
