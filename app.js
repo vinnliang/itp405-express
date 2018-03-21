@@ -1,7 +1,52 @@
 const express = require('express');
 const knex = require('knex');
-
 const app = express();
+const Genre = require('./models/Genre');
+let bookshelf = require('bookshelf');
+bookshelf = bookshelf(connect());
+
+function connect()
+{
+  let connection = knex(
+    {
+        client:'sqlite3',
+        connection:
+        {
+            filename:'./database.sqlite'
+        }
+    });
+
+    return connection;
+}
+
+app.get('/v2/genres', function(request, response)
+{
+  Genre.fetchAll().then(function()
+  {
+    response.json(genres);
+  });
+});
+
+app.get('/v2/genres/:id', function(request, response)
+{
+  let id = request.params.id;
+  let genre = new Genre({ GenreId: id});
+  genre.fetch().then(function(genre)
+  {
+    if(!genre)
+    {
+      //response.status(404).json({error: `Genre ${id} not found`});
+      throw new Error(`Genre ${id} not found`);
+    } else
+    {
+      response.json(genre);
+    }
+  }).catch(function(error)
+  {
+      console.log(error);
+      response.status(404).json({error: error.message });
+  });
+});
 
 app.get('/genres', function(request, response)
 {
@@ -86,19 +131,33 @@ app.get('/api/artists', function(req, res)
     };
 });
 
-function connect()
+app.delete('/tracks/:id', function(req, res)
 {
-  let connection = knex(
-    {
-        client:'sqlite3',
-        connection:
-        {
-            filename:'./database.sqlite'
-        }
-    });
 
-    return connection;
-}
+  const Tracks = bookshelf.Model.extend(
+  {
+    tableName: 'tracks',
+    idAttribute: 'TrackId'
+  });
+  let id = req.params.id;
+  let Track = new Tracks({ TrackId:id});
+  Track.destroy().then(function(track)
+  {
+      if (!track)
+      {
+        throw new Error(`Track ${id} does not appear to exist`);
+      } else
+      {
+        res.status(204).json(null);
+      }
+    }).catch(function(error)
+    {
+      res.status(404).json(
+      {
+        error: error.message
+      });
+    });
+});
 
 const port = process.env.PORT || 8000;
 
