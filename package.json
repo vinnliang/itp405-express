@@ -11,8 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "bookshelf": "^0.13.0",
+    "cheerio": "^1.0.0-rc.2",
+    "dotenv": "^5.0.1",
     "express": "^4.16.2",
     "knex": "^0.14.4",
+    "npm": "^5.8.0",
+    "request": "^2.85.0",
     "sqlite3": "^3.1.13"
   }
 }
