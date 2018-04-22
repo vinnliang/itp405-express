@@ -1,27 +1,6 @@
-const express = require('express');
-const knex = require('knex');
-const app = express();
-let bookshelf = require('bookshelf');
-bookshelf = bookshelf(connect());
+const bookshelf = require('./../bookshelf');
 
-function connect()
-{
-  let connection = knex(
-    {
-        client:'sqlite3',
-        connection:
-        {
-            filename:'./database.sqlite'
-        }
-    });
-
-    return connection;
-}
-
-const Genre = bookshelf.Model.extend(
-{
+module.exports = bookshelf.Model.extend({
   tableName: 'genres',
-  idAttribut: 'GenreId'
+  idAttribute: 'GenreId'
 });
-
-module.exports = Genre;
